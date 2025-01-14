@@ -1,0 +1,34 @@
+# movie_script_generator.py
+
+from flask import Flask, render_template, request, jsonify
+import random
+
+app = Flask(__name__)
+
+# Predefined templates for different genres
+script_templates = {
+    "action": "[Opening Scene]\nThe city is under siege. {character1}, a fearless cop, takes on the gang that has brought chaos.\n[Middle Scene]\n{character2}, a mysterious ally, joins the fight to uncover the hidden agenda of the villains. Together, they plan their attack.\n[Climax Scene]\nIn a high-octane showdown, {character1} faces the gang leader, risking everything to save the city.",
+
+    "romance": "[Opening Scene]\n{character1} is a shy artist living in a bustling city. Their life changes when they meet {character2}, a charming newcomer.\n[Middle Scene]\nAs their friendship blossoms into love, challenges arise from their contrasting worlds.\n[Climax Scene]\nIn a heartwarming finale, they overcome obstacles to confess their love in a dramatic setting.",
+
+    "comedy": "[Opening Scene]\n{character1} and {character2} accidentally swap their phones at a busy cafe, leading to a series of hilarious misunderstandings.\n[Middle Scene]\nThey team up to fix the chaos caused by their swapped lives, including mistaken identities and awkward encounters.\n[Climax Scene]\nA comedic showdown at a party reveals the mix-up, leaving everyone in fits of laughter."
+}
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/generate', methods=['POST'])
+def generate():
+    data = request.json
+    genre = data.get('genre', 'action').lower()
+    character1 = data.get('character1', 'Alex')
+    character2 = data.get('character2', 'Jamie')
+
+    template = script_templates.get(genre, script_templates['action'])
+    script = template.format(character1=character1, character2=character2)
+
+    return jsonify({"script": script})
+
+if __name__ == '__main__':
+    app.run(debug=True)
